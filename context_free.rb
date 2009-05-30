@@ -11,9 +11,11 @@ module Processing
     AVAILABLE_OPTIONS = [:x, :y, :rotation, :size, :flip, :color, :hue, :saturation, :brightness]
     HSB_ORDER = {:hue => 0, :saturation => 1, :brightness => 2}
     
-    def initialize()
-      @rules = {}
-      @finished = false
+    def initialize
+      @app          = $app
+      @graphics     = $app.g
+      @finished     = false
+      @rules        = {}
       @rewind_stack = []
       @matrix_stack = []
     end
@@ -124,25 +126,15 @@ module Processing
       yield
       restore_context
     end
-    
-    # TODO: Look into why the matrix stack isn't working quite right.
-    
+        
     def save_context
       @rewind_stack.push @values.dup
-      # g = @app.g # The Graphics object
-      # g.load_matrix
-      # @matrix_stack << [g.m00, g.m01, g.m02,
-      #                   g.m10, g.m11, g.m12]
-      @app.push_matrix
+      @matrix_stack << @graphics.get_matrix
     end
     
     def restore_context
-      @values = @rewind_stack.pop
-      # g = @app.g # The Graphics object
-      # v = @matrix_stack.pop
-      # g.reset_matrix
-      # g.apply_matrix *v
-      @app.pop_matrix
+      @values = @rewind_stack.pop      
+      @graphics.set_matrix @matrix_stack.pop
     end
     
     def rewind
@@ -160,7 +152,6 @@ module Processing
                  :color => [0.5, 0.5, 0.5]}
       @values.merge!(@starting_values)
       @finished = false
-      @app = $app
       @app.reset_matrix
       @app.no_stroke
       @app.color_mode(App::HSB, 1.0)
