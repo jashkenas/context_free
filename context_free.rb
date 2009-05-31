@@ -5,11 +5,21 @@ module Processing
   
   class ContextFree
     
+    include Processing::Proxy
+    
     attr_accessor :rules, :app
     
-    STOP_SIZE         = 1.5
     AVAILABLE_OPTIONS = [:x, :y, :rotation, :size, :flip, :color, :hue, :saturation, :brightness]
     HSB_ORDER         = {:hue => 0, :saturation => 1, :brightness => 2}
+    
+    
+    # Define a context-free system. Use this method to create a ContextFree
+    # object. Call render() on it to make it draw.
+    def self.define(&block)
+      cf = ContextFree.new
+      cf.instance_eval &block
+      cf
+    end
     
     
     # Initialize a bare ContextFree object with empty recursion stacks.
@@ -30,14 +40,6 @@ module Processing
         @values[option_name]
       end
     end
-       
-    
-    # When you start a context-free drawing, you can initialize the variables
-    # with starting values.    
-    def setup(some_hash)
-      @starting_values = some_hash
-      @starting_values[:stop_size] ||= STOP_SIZE
-    end
     
     
     # Here's the first serious method: A Rule has an 
@@ -57,7 +59,7 @@ module Processing
             def #{rule_name}(options)
               merge_options(@values, options)
               pick = determine_rule(#{rule_name.inspect})
-              @finished = true if @values[:size] < STOP_SIZE
+              @finished = true if @values[:size] < @values[:stop_size]
               unless @finished
                 get_ready_to_draw
                 pick[1].call(options)
@@ -159,16 +161,19 @@ module Processing
     
     # Render the is method that kicks it all off, initializing the options 
     # and calling the first rule.
-    def render(rule_name)
+    def render(rule_name, starting_values={})
       @values = {:x => 0, :y => 0, 
                  :rotation => 0, :flip => false, 
                  :size => 20, :width => 20, :height => 20,
-                 :color => [0.5, 0.5, 0.5]}
-      @values.merge!(@starting_values)
+                 :color => [0.5, 0.5, 0.5],
+                 :stop_size => 1.5}
+      @values.merge!(starting_values)
       @finished = false
       @app.reset_matrix
+      @app.rect_mode CENTER
+      @app.ellipse_mode CENTER
       @app.no_stroke
-      @app.color_mode(App::HSB, 1.0)
+      @app.color_mode HSB, 1.0
       @app.translate @values[:start_x], @values[:start_y]
       self.send(rule_name, {})
     end
@@ -196,39 +201,26 @@ module Processing
     # methods, but hopefully triangles will be added soon.
     def square(some_options=nil)
       size, options = *get_shape_values(some_options)
-      @app.rect(-(size/2), -(size/2), size, size)
+      @app.rect(0, 0, size, size)
     end
     
     
     def circle(some_options=nil)
       size, options = *get_shape_values(some_options)
-      @app.ellipse(-(size/2), -(size/2), size, size)
+      @app.ellipse(0, 0, size, size)
     end
     
     
-    def ellipse(some_options=nil)
+    def ellipse(some_options={})
       rot = some_options[:rotation]
       @app.rotate(rot) if rot
       size, options = *get_shape_values(some_options)
       width = options[:width] || options[:size]
       height = options[:height] || options[:size]
-      @app.oval(options[:x], options[:y], width, height)
+      @app.oval(options[:x] || 0, options[:y] || 0, width, height)
       @app.rotate(-rot) if rot
     end
     alias_method :oval, :ellipse
-    
-  end
-  
-  
-  # Processing::App gets a context_free method, as a hook for defining the rules.
-  class App
-    
-    # Instantiate and setup a new ContextFree object.
-    def context_free(&block)
-      drawing = ContextFree.new
-      drawing.instance_eval &block
-      return drawing
-    end
     
   end
   

@@ -9,7 +9,8 @@ def setup_the_trees
     c.slider :srand, 0..100
   end
   
-  @tree = context_free do
+  @tree = ContextFree.define do
+    
     rule :seed do
       square
       leaf :y => 0 if size < 4.5 && rand < 0.018
@@ -37,17 +38,18 @@ def setup_the_trees
       the_size = rand(25)
       the_x = [1, 0, 0, 0][rand(4)]
       circle :size => the_size, :hue => 0.15, :saturation => 1.25, 
-             :brightness => 1.9, :x => the_x, :color => [0.3, 0.5]
+             :brightness => 1.9, :x => the_x, :color => [0.95, 0.15]
     end
     
     rule :flower do
-      split :brightness => rand(1.3)+4.7, :set_width => rand(15)+10, :set_height => rand(2)+2 do
+      split :saturation => 0, :brightness => rand(1.3)+4.7, :set_width => rand(15)+10, :set_height => rand(2)+2 do
         oval :rotation => 0
         oval :rotation => 45
         oval :rotation => 90
         oval :rotation => 135
       end
     end
+    
   end
   
 end
@@ -59,13 +61,11 @@ def setup
   no_stroke
   smooth
   frame_rate 5
-  the_color = [0.5, 0.7, 0.8]
-  @tree.setup :start_x => width/2, :start_y => height+20, :size => height/60, :color => the_color
   draw_it
 end
 
 def draw
-  
+  # Do nothing.
 end
 
 def draw_the_background
@@ -85,7 +85,7 @@ end
 def draw_it
   Kernel::srand(@srand) if @srand
   draw_the_background
-  @tree.render :seed
+  @tree.render :seed, :start_x => width/2, :start_y => height+20, :size => height/60, :color => [0.7, 0.15, 0.8]
 end
 
 def mouse_clicked
