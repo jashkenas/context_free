@@ -1,16 +1,18 @@
-# A first stab at doing a Context-Free, 
-# domain-specific language for Ruby-Processing.
-# The next draft will probably break the rules 
-# and rulesets out into actual classes of their own.
+# A Context-Free library for Ruby-Processing, inspired by
+# contextfreeart.org
 
 module Processing
   
   class ContextFree
-    attr_accessor :rules, :app
-    STOP_SIZE = 1.5
-    AVAILABLE_OPTIONS = [:x, :y, :rotation, :size, :flip, :color, :hue, :saturation, :brightness]
-    HSB_ORDER = {:hue => 0, :saturation => 1, :brightness => 2}
     
+    attr_accessor :rules, :app
+    
+    STOP_SIZE         = 1.5
+    AVAILABLE_OPTIONS = [:x, :y, :rotation, :size, :flip, :color, :hue, :saturation, :brightness]
+    HSB_ORDER         = {:hue => 0, :saturation => 1, :brightness => 2}
+    
+    
+    # Initialize a bare ContextFree object with empty recursion stacks.
     def initialize
       @app          = $app
       @graphics     = $app.g
@@ -20,22 +22,23 @@ module Processing
       @matrix_stack = []
     end
     
-    # Create an accessor for the current value of every option.
+    
+    # Create an accessor for the current value of every option. We use a values
+    # object so that all the state can be saved and restored as a unit.
     AVAILABLE_OPTIONS.each do |option_name|
       define_method option_name do
         @values[option_name]
       end
     end
-        
+       
+    
+    # When you start a context-free drawing, you can initialize the variables
+    # with starting values.    
     def setup(some_hash)
       @starting_values = some_hash
       @starting_values[:stop_size] ||= STOP_SIZE
     end
     
-    # A shortcut for defining methods on yourself.
-    def create_method(name, &block)
-      self.class.send(:define_method, name, &block)
-    end
     
     # Here's the first serious method: A Rule has an 
     # identifying name, a probability, and is associated with 
@@ -64,7 +67,8 @@ module Processing
         end
       end
     end
-        
+    
+    
     # Rule choice is random, based on the assigned probabilities.
     def determine_rule(rule_name)
       rule = @rules[rule_name]
@@ -72,6 +76,7 @@ module Processing
       pick = @rules[rule_name][:procs].select {|the_proc| the_proc[0].include?(chance) }
       return pick.flatten
     end
+    
     
     # At each step of the way, any of the options may change, slightly.
     # Many of them have different strategies for being merged.
@@ -102,6 +107,7 @@ module Processing
       end
     end
     
+    
     # Using an unknown key let's you set arbitrary values, 
     # to keep track of for your own ends.
     def merge_unknown_key(key, value, old_ops)
@@ -118,6 +124,7 @@ module Processing
       end
     end
     
+    
     # Doing a 'split' saves the context, and proceeds from there, 
     # allowing you to rewind to where you split from at any moment.
     def split(options=nil, &block)
@@ -126,22 +133,29 @@ module Processing
       yield
       restore_context
     end
-        
+       
+    
+    # Saving the context means the values plus the coordinate matrix. 
     def save_context
       @rewind_stack.push @values.dup
       @matrix_stack << @graphics.get_matrix
     end
     
+    
+    # Restore the values and the coordinate matrix as the recursion unwinds.
     def restore_context
       @values = @rewind_stack.pop      
       @graphics.set_matrix @matrix_stack.pop
     end
     
+    
+    # Rewinding goes back one step.
     def rewind
       @finished = false
       restore_context
       save_context
     end
+    
     
     # Render the is method that kicks it all off, initializing the options 
     # and calling the first rule.
@@ -159,12 +173,17 @@ module Processing
       self.send(rule_name, {})
     end
     
+    
+    # Before actually drawing the next step, we need to move to the appropriate
+    # location.
     def get_ready_to_draw
       @app.translate(@values[:x], @values[:y])
       sign = (@values[:flip] ? -1 : 1)
       @app.rotate(sign * @values[:rotation])
     end
     
+    
+    # Compute the rendering parameters for drawing a shape.
     def get_shape_values(some_options)
       old_ops = @values.dup
       merge_options(old_ops, some_options) if some_options
@@ -172,19 +191,22 @@ module Processing
       return old_ops[:size], old_ops
     end
     
-    # Square, circle, and oval are the primitive drawing
+    
+    # Square, circle, and ellipse are the primitive drawing
     # methods, but hopefully triangles will be added soon.
     def square(some_options=nil)
       size, options = *get_shape_values(some_options)
       @app.rect(-(size/2), -(size/2), size, size)
     end
     
+    
     def circle(some_options=nil)
       size, options = *get_shape_values(some_options)
-      @app.oval(-(size/2), -(size/2), size, size)
+      @app.ellipse(-(size/2), -(size/2), size, size)
     end
     
-    def oval(some_options=nil)
+    
+    def ellipse(some_options=nil)
       rot = some_options[:rotation]
       @app.rotate(rot) if rot
       size, options = *get_shape_values(some_options)
@@ -193,18 +215,19 @@ module Processing
       @app.oval(options[:x], options[:y], width, height)
       @app.rotate(-rot) if rot
     end
-    alias_method :ellipse, :oval
+    alias_method :oval, :ellipse
     
   end
   
-  # Processing::App's get a context_free method, as a hook for 
-  # defining their rules.
+  
+  # Processing::App gets a context_free method, as a hook for defining the rules.
   class App
     
+    # Instantiate and setup a new ContextFree object.
     def context_free(&block)
-      free = ContextFree.new
-      free.instance_eval &block
-      return free
+      drawing = ContextFree.new
+      drawing.instance_eval &block
+      return drawing
     end
     
   end
