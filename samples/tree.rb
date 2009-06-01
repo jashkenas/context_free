@@ -85,7 +85,8 @@ end
 def draw_it
   Kernel::srand(@srand) if @srand
   draw_the_background
-  @tree.render :seed, :start_x => width/2, :start_y => height+20, :size => height/60, :color => [0.7, 0.15, 0.8]
+  @tree.render :seed, :start_x => width/2, :start_y => height+20, 
+                      :size => height/60, :color => [0.7, 0.15, 0.8]
 end
 
 def mouse_clicked

@@ -8,3 +8,27 @@
     S '+' S   'a'
     |     |
    '1'   '1'
+   
+   
+CONTEXT_FREE: 
+A library for context free art in Ruby-Processing.
+
+
+RECOMMENDED READING:
+contextfreeart.org
+wikipedia.org/wiki/Chomsky_hierarchy
+wikipedia.org/wiki/L-system
+
+
+HOW TO:
+For now, check out the samples.
+
+TO DO:
+* Make the drawings run in a separate thread so you can watch 'em go.
+* Determine if we can run the rules iteratively without needing to parse them.
+* Settle on a more compact vocabulary of options (although not as cryptic
+  as ContextFree.app's).
+* Comment the examples with helpful pointers.
+* Write a real README.
+* Stick up a GitHub wiki that's just a page full of images of all the examples.
+* Try some neat integrations of context_free + control_panel.
