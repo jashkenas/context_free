@@ -166,6 +166,7 @@ module Processing
       @values = {:x => 0, :y => 0, 
                  :rotation => 0, :flip => false, 
                  :size => 20, :width => 20, :height => 20,
+                 :start_x => width/2, :start_y => height/2,
                  :color => [0.5, 0.5, 0.5],
                  :stop_size => 1.5}
       @values.merge!(starting_values)

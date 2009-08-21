@@ -1,7 +1,6 @@
 load_library 'context_free'
 
 def setup_the_city
-  
   @city = ContextFree.define do
     
     rule :neighborhood do
@@ -33,9 +32,7 @@ def setup_the_city
     end
     
   end
-  
 end
-
 
 def setup
   size 600, 600
@@ -45,11 +42,9 @@ def setup
   draw_it
 end
 
-
 def draw
   # Do nothing
 end
-
 
 def draw_it
   background @background
@@ -57,7 +52,6 @@ def draw_it
                :start_x => width/2, :start_y => height/2, 
                :size => height/2.5, :color => [0.1, 0.1, 0.1]
 end
-
 
 def mouse_clicked
   draw_it

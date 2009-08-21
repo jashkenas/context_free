@@ -22,7 +22,6 @@ def setup_the_fern
   end
 end
 
-
 def setup
   size 600, 600
   setup_the_fern
@@ -32,18 +31,15 @@ def setup
   draw_it
 end
 
-
 def draw
   # Do nothing.
 end
-
 
 def draw_it
   background 0.33, 0.25, 0.2
   @fern.render :start, :size => height/23, :color => [0.35, 0.4, 0.9, 0.55], :stop_size => 1,
                        :start_x => width/2.5, :start_y => height/1.285
 end
-
 
 def mouse_clicked
   draw_it

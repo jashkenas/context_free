@@ -31,7 +31,6 @@ def setup_the_vine
   end
 end
 
-
 def setup
   size 700, 700
   setup_the_vine
@@ -41,18 +40,15 @@ def setup
   draw_it
 end
 
-
 def draw
   # Do nothing.
 end
-
 
 def draw_it
   background 0.75, 1.0, 0.15
   @vine.render :root, :size => height/75, :color => [0.75, 0.1, 0.9],
                      :start_x => width/2, :start_y => height/2
 end
-
 
 def mouse_clicked
   draw_it
