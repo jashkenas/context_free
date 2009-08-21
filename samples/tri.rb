@@ -1,4 +1,4 @@
-# dark_star.rb ruby-processing
+# tri.rb ruby-processing
 load_library 'context_free'
 
 def setup_the_sun
@@ -29,7 +29,7 @@ def setup
         color_mode HSB, 1.0
         smooth
         draw_it
-        save_frame("sun.png")
+        save_frame("tri.png")
 end
 
 
