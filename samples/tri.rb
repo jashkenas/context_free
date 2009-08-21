@@ -6,9 +6,9 @@ def setup_the_sun
                 rule :start do
                         rot = 0
                         split do
-                                3.times do
+                                4.times do
                                         legs :rotation => rot
-                                        rot += 80
+                                        rot += 90
                                         rewind
                                 end
                                 legs :rotation => 360
