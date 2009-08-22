@@ -11,8 +11,8 @@ module Processing
     
     AVAILABLE_OPTIONS = [:x, :y, :rotation, :size, :flip, :color, :hue, :saturation, :brightness]
     HSB_ORDER         = {:hue => 0, :saturation => 1, :brightness => 2}
-    Y_PLUS_TRIANGLE = (5 * (Math.sqrt(3)) - 4) / 8
-    Y_MINUS_TRIANGLE = (Math.sqrt(3) - 4) / 8
+    Y_TRIANGLE_TOP = (4 - (5 * (Math.sqrt(3)))) / 8 # adjusted for processing coords
+    Y_TRIANGLE_BOTTOM = (4 - Math.sqrt(3)) / 8 # adjusted for processing coords
     
     # Define a context-free system. Use this method to create a ContextFree
     # object. Call render() on it to make it draw.
@@ -213,7 +213,7 @@ module Processing
 
     def triangle(some_options=nil)
       size, options = *get_shape_values(some_options)
-      @app.triangle(0, Y_PLUS_TRIANGLE * size, 0.5 * size, Y_MINUS_TRIANGLE * size, -0.5 * size, Y_MINUS_TRIANGLE * size)
+      @app.triangle(0, Y_TRIANGLE_TOP * size, 0.5 * size, Y_TRIANGLE_BOTTOM * size, -0.5 * size, Y_TRIANGLE_BOTTOM * size)
     end
     
     
