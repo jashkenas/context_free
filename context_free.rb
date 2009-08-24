@@ -213,8 +213,11 @@ module Processing
     end
 
     def triangle(some_options=nil)
+      rot = some_options[:rotation]
+      @app.rotate(rot) if rot
       size, options = *get_shape_values(some_options)
       @app.triangle(0, Y_TRIANGLE_TOP * size, 0.5 * size, Y_TRIANGLE_BOTTOM * size, -0.5 * size, Y_TRIANGLE_BOTTOM * size)
+      @app.rotate(-rot) if rot
     end
     
     
