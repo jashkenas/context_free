@@ -1,24 +1,24 @@
 # TODO: Fix the triangle primitive to not have any points going out of the unit
 # circle.
 
-load_library 'context_free'
+load_library 'context_free', 'control_panel'
 
-Y_TOP = (4 - (5 * (Math.sqrt(3))))/8
-Y_BOT = (4 - Math.sqrt(3))/8
+attr_accessor :resolution
 
 def setup_the_triangle
   
   @triangle = ContextFree.define do
-    
     rule :tri do
-      triangle :size => 1.0, :set_brightness => 1
-      triangle :size => 0.51, :set_brightness => 0, :rotation => PI
+      triangle :size => 0.5, :rotation => PI
       split do
-        tri :size => 0.5, :y => -0.577, :x => 0
+        tri :size => 0.5, :y => -0.578, :x => 0, 
+            :hue => 0.8, :saturation => 0.2, :brightness => 0.8
         rewind
-        tri :size => 0.5, :y => 0.285, :x => -0.51
+        tri :size => 0.5, :y => 0.289, :x => -0.5, :hue => 0.2, 
+            :saturation => 0.2, :brightness => 0.8
         rewind
-        tri :size => 0.5, :y => 0.285, :x => 0.51
+        tri :size => 0.5, :y => 0.289, :x => 0.5, :hue => 0.2, 
+            :saturation => 0.2, :brightness => 0.8
       end
     end
     
@@ -31,18 +31,13 @@ def setup
   no_stroke
   color_mode HSB, 1.0
   smooth
-  draw_it
+  @resolution = 5
+  control_panel do |p|
+    p.slider :resolution, (2..50), 5
+  end
 end
 
 def draw
-  # Do nothing.
-end
-
-def draw_it
   background 0.1
-  @triangle.render :tri, :size => height/1.2, :color => [0, 0, 0], :stop_size => 5, :start_y => height/1.65
-end
-
-def mouse_clicked
-  draw_it
+  @triangle.render :tri, :size => height/1.1, :color => [0, 0.5, 1], :stop_size => @resolution, :start_y => height/1.65
 end

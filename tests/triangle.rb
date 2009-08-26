@@ -7,6 +7,7 @@ def setup
     rule :tri do
       circle      
       triangle :brightness => 0
+      circle :brightness => 10, :size => 0.02
     end
   end
   
