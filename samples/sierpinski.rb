@@ -1,6 +1,3 @@
-# TODO: Fix the triangle primitive to not have any points going out of the unit
-# circle.
-
 load_library 'context_free', 'control_panel'
 
 attr_accessor :resolution
