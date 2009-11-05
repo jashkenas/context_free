@@ -9,8 +9,8 @@ module Processing
     
     attr_accessor :rules, :app
     
-    AVAILABLE_OPTIONS = [:x, :y, :rotation, :size, :flip, :color, :hue, :saturation, :brightness]
-    HSB_ORDER         = {:hue => 0, :saturation => 1, :brightness => 2}
+    AVAILABLE_OPTIONS = [:x, :y, :rotation, :size, :flip, :color, :hue, :saturation, :brightness, :alpha]
+    HSB_ORDER         = {:hue => 0, :saturation => 1, :brightness => 2, :alpha => 3}
     TRIANGLE_TOP      = -1 / Math.sqrt(3)
     TRIANGLE_BOTTOM   = Math.sqrt(3) / 6
     
@@ -94,7 +94,7 @@ module Processing
           old_ops[key] = value * old_ops[:size]
         when :rotation
           old_ops[key] = value * (Math::PI / 180.0)
-        when :hue, :saturation, :brightness
+        when :hue, :saturation, :brightness, :alpha
           adjusted = old_ops[:color].dup
           adjusted[HSB_ORDER[key]] *= value
           old_ops[:color] = adjusted
@@ -167,7 +167,7 @@ module Processing
                  :rotation => 0, :flip => false, 
                  :size => 20, :width => 20, :height => 20,
                  :start_x => width/2, :start_y => height/2,
-                 :color => [0.5, 0.5, 0.5],
+                 :color => [0.5, 0.5, 0.5, 1],
                  :stop_size => 1.5}
       @values.merge!(starting_values)
       @finished = false
@@ -175,7 +175,7 @@ module Processing
       @app.rect_mode CENTER
       @app.ellipse_mode CENTER
       @app.no_stroke
-      @app.color_mode HSB, 1.0
+      @app.color_mode HSB, 1.0, 1.0, 1.0, 1.0
       @app.translate @values[:start_x], @values[:start_y]
       self.send(rule_name, {})
     end
