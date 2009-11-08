@@ -175,7 +175,7 @@ module Processing
       @app.rect_mode CENTER
       @app.ellipse_mode CENTER
       @app.no_stroke
-      @app.color_mode HSB, 1.0, 1.0, 1.0, 1.0
+      @app.color_mode HSB, 1.0
       @app.translate @values[:start_x], @values[:start_y]
       self.send(rule_name, {})
     end
