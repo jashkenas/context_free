@@ -4,7 +4,7 @@ load_library 'context_free'
 
 def setup_the_sun
   @sun = ContextFree.define do
-    
+
     rule :start do
       rot = 0
       split do
@@ -16,13 +16,13 @@ def setup_the_sun
         legs :rotation => 360
       end
     end
-    
+
     rule :legs do
       circle
       legs :rotation => 1, :y => 0.1,
-      :size => 0.973, :color => [0.22, 0.15], :alpha => 0.5
+      :size => 0.973, :color => [0.22, 0.15]
     end
-    
+
   end
 end
 
@@ -43,7 +43,7 @@ end
 def draw_it
   background 0.7
   @sun.render :start, :size => height/7,  :stop_size => 0.8,
-  :start_x => width/2, :start_y => height/2 
+  :start_x => width/2, :start_y => height/2
 end
 
 def mouse_clicked
